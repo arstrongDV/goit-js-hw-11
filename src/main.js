@@ -19,23 +19,25 @@ const handleSubmit = (e) => {
     showLoader();
 
     getImagesByQuery(text)
-    .then(res => {
-        hideLoader();
-        if(res.data.hits.length == 0){
+        .then(images => {
+            hideLoader();
+
+            if (images.length === 0) {
+                iziToast.show({
+                    message: 'Sorry, there are no images matching your search query. Please try again!'
+                });
+                return;
+            }
+
+            createGallery(images);
+            input.value = '';
+        })
+        .catch(() => {
+            hideLoader();
             iziToast.show({
-                message: 'Sorry, there are no images matching your search query. Please try again!'
+                message: 'Sorry, there was an error fetching images. Please try again!'
             });
-            return;
-        }
-        createGallery(res.data.hits);
-        input.value = '';
-    })
-    .catch(() => {
-        hideLoader();
-        iziToast.show({
-            message: 'Sorry, there are no images matching your search query. Please try again!'
         });
-    });
 }
 
 form.addEventListener("submit", handleSubmit);
